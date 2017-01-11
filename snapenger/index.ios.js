@@ -9,22 +9,43 @@ import {
   AppRegistry,
   StyleSheet,
   Text,
-  View
+  View,
+  ScrollView,
+  Image,
+  CameraRoll
 } from 'react-native';
 
 export default class snapenger extends Component {
+  getInitialState() {
+    return {
+      images: [],
+    };
+  }
+
+  componentDidMount() {
+    const fetchParams = {
+      first: 25,
+    };
+    CameraRoll.getPhotos(fetchParams, this.storeImages, this.logImageError);
+  }
+
+  storeImages(data) {
+    const assets = data.edges;
+    const images = assets.map((asset) => asset.node.image);
+    this.setState({
+      images: images,
+    });
+  }
+
+  logImageError(err) {
+    console.log(err);
+  }
+
   render() {
     return (
       <View style={styles.container}>
         <Text style={styles.welcome}>
           Welcome to React Native!
-        </Text>
-        <Text style={styles.instructions}>
-          To get started, edit index.ios.js
-        </Text>
-        <Text style={styles.instructions}>
-          Press Cmd+R to reload,{'\n'}
-          Cmd+D or shake for dev menu
         </Text>
       </View>
     );
@@ -47,6 +68,21 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     color: '#333333',
     marginBottom: 5,
+  },
+  imageContainer: {
+    flex: 1,
+    backgroundColor: '#F5FCFF',
+  },
+  imageGrid: {
+    flex: 1,
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'center'
+  },
+  image: {
+    width: 100,
+    height: 100,
+    margin: 10,
   },
 });
 
